@@ -1,0 +1,11 @@
+package: dclean/src
+import:
+- package: github.com/docker/docker
+  version: master
+  subpackages:
+  - client
+  - api/types/swarm
+#- package: github.com/docker/docker/types
+#  version: master
+- package: github.com/fsouza/go-dockerclient
+- package: github.com/jinzhu/now

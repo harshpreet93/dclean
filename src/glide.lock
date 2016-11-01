@@ -1,0 +1,64 @@
+hash: 8b15489533f0adc3467c8e63e08b04d38d3b8a7850dd6f5c12b4760b197c7de8
+updated: 2016-10-31T23:18:59.585820982-07:00
+imports:
+- name: github.com/Azure/go-ansiterm
+  version: fa152c58bc15761d0200cb75fe958b89a9d4888e
+  subpackages:
+  - winterm
+- name: github.com/docker/docker
+  version: d8d33148d809ec97794bbd492617b1be677cf820
+  subpackages:
+  - client
+  - api/types/swarm
+  - opts
+  - pkg/archive
+  - pkg/fileutils
+  - pkg/homedir
+  - pkg/jsonmessage
+  - pkg/stdcopy
+  - api/types/container
+  - api/types/mount
+  - api/types/filters
+  - pkg/idtools
+  - pkg/ioutils
+  - pkg/pools
+  - pkg/promise
+  - pkg/system
+  - pkg/longpath
+  - pkg/jsonlog
+  - pkg/term
+  - api/types/blkiodev
+  - api/types/strslice
+  - api/types/versions
+  - pkg/term/windows
+- name: github.com/docker/go-connections
+  version: f512407a188ecb16f31a33dbc9c4e4814afc1b03
+  subpackages:
+  - nat
+- name: github.com/docker/go-units
+  version: 8a7beacffa3009a9ac66bad506b18ffdd110cf97
+- name: github.com/fsouza/go-dockerclient
+  version: 3162ed100df52ad76c94cdf1b8b2a45d4f5e203d
+- name: github.com/hashicorp/go-cleanhttp
+  version: ad28ea4487f05916463e2423a55166280e8254b5
+- name: github.com/jinzhu/now
+  version: d9861969c7a7e84746d341c09020c2ef8a617f8f
+- name: github.com/Microsoft/go-winio
+  version: ce2922f643c8fd76b46cadc7f404a06282678b34
+- name: github.com/opencontainers/runc
+  version: bc462c96bf7b15b68ab40e86335cefcb692707c1
+  subpackages:
+  - libcontainer/system
+  - libcontainer/user
+- name: github.com/Sirupsen/logrus
+  version: 55eb11d21d2a31a3cc93838241d04800f52e823d
+- name: golang.org/x/net
+  version: 4876518f9e71663000c348837735820161a42df7
+  subpackages:
+  - context
+  - context/ctxhttp
+- name: golang.org/x/sys
+  version: c200b10b5d5e122be351b67af224adc6128af5bf
+  subpackages:
+  - windows
+devImports: []
