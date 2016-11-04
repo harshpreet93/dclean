@@ -5,6 +5,7 @@ import (
 	"github.com/fsouza/go-dockerclient"
 	"time"
 	"regexp"
+	"strings"
 )
 
 func getAllImgs() []docker.APIImages {
@@ -46,8 +47,26 @@ func imgsWithTag(imgs []docker.APIImages, tagRegex string) []docker.APIImages {
 	return imgsWithTag
 }
 
+func isOlderThan(img docker.APIImages, filterExp string) bool {
+	//createdAt := time.Unix(img.Created, 0)
+	trimmed := strings.TrimSpace(filterExp)
+	timeFilterExp := regexp.MustCompile(`(?P<num>\d+)(?P<unit>m|h|d|w|y)`)
+	match := timeFilterExp.FindStringSubmatch(trimmed)
+	result := make(map[string]string)
+	for i, name := range timeFilterExp.SubexpNames() {
+		// result[name] = match[i]
+		if i != 0 {
+			fmt.Println("name "+name)
+			result[name] = match[i]
+			fmt.Println(result[name])
+		}
+	}
+	return true
+}
+
 
 func main() {
-	printImgs( imgsWithTag( getAllImgs(), "^cent.*" ) )
+	//printImgs( imgsWithTag( getAllImgs(), "^<no.*" ) )
+	isOlderThan(getAllImgs()[0], "1h")
 
 }
