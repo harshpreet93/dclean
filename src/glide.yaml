@@ -5,7 +5,6 @@ import:
   subpackages:
   - client
   - api/types/swarm
-#- package: github.com/docker/docker/types
-#  version: master
 - package: github.com/fsouza/go-dockerclient
 - package: github.com/jinzhu/now
+- package: github.com/uniplaces/carbon

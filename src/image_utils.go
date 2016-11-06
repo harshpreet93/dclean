@@ -6,6 +6,8 @@ import (
 	"time"
 	"regexp"
 	"strings"
+	"strconv"
+	"github.com/pkg/errors"
 )
 
 func getAllImgs() []docker.APIImages {
@@ -47,13 +49,13 @@ func imgsWithTag(imgs []docker.APIImages, tagRegex string) []docker.APIImages {
 	return imgsWithTag
 }
 
-func isOlderThan(img docker.APIImages, filterExp string) bool {
-	//createdAt := time.Unix(img.Created, 0)
-	trimmed := strings.TrimSpace(filterExp)
-	timeFilterExp := regexp.MustCompile(`(?P<num>\d+)(?P<unit>m|h|d|w|y)`)
-	match := timeFilterExp.FindStringSubmatch(trimmed)
+func convertRegexMatchToMap(toMatch string, regex *regexp.Regexp) (map[string] string, error ){
+	match := regex.FindStringSubmatch(toMatch)
 	result := make(map[string]string)
-	for i, name := range timeFilterExp.SubexpNames() {
+	if len(match) == 0 {
+		return nil, errors.New("did not find match for regex "+regex.String())
+	}
+	for i, name := range regex.SubexpNames() {
 		// result[name] = match[i]
 		if i != 0 {
 			fmt.Println("name "+name)
@@ -61,12 +63,57 @@ func isOlderThan(img docker.APIImages, filterExp string) bool {
 			fmt.Println(result[name])
 		}
 	}
-	return true
+	return result, nil
+}
+
+func convertToNumSecs(timeScalar int, timeUnit string) int {
+	//var result int64
+	if timeUnit == "m" {
+		return timeScalar * 60
+	}
+	if timeUnit == "h" {
+		return timeScalar * 60 * 60
+	}
+	if timeUnit == "d" {
+		return timeScalar * 24 * 60 * 60
+	}
+	if timeUnit == "w" {
+		return timeScalar * 7 * 24 * 60 * 60
+	}
+	return 0
+}
+
+func isOlderThan(img docker.APIImages, filterExp string) bool {
+	//createdAt := time.Unix(img.Created, 0)
+	trimmed := strings.TrimSpace(filterExp)
+	timeFilterExp := regexp.MustCompile(`(?P<num>\d+)(?P<unit>m|h|d|w|y)`)
+	timeAndUnit, err := convertRegexMatchToMap(trimmed, timeFilterExp)
+	if err != nil {
+		return false
+	}
+
+	timeScalar, err := strconv.Atoi(timeAndUnit["num"])
+
+	if err != nil {
+		return false
+	}
+
+	timeUnit := timeAndUnit["unit"]
+
+	querySecs := convertToNumSecs(timeScalar, timeUnit)
+
+	return img.Created < (time.Now().Unix() - int64(querySecs))
+	//return true
 }
 
 
 func main() {
 	//printImgs( imgsWithTag( getAllImgs(), "^<no.*" ) )
-	isOlderThan(getAllImgs()[0], "1h")
+	for _, img := range getAllImgs() {
+		fmt.Println("############ img ############")
+		printImg(img)
+		fmt.Println(isOlderThan(img, "60d"))
+	}
+	fmt.Println( isOlderThan(getAllImgs()[0], "60d") )
 
 }

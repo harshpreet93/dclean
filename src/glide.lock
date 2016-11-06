@@ -1,12 +1,12 @@
-hash: 8b15489533f0adc3467c8e63e08b04d38d3b8a7850dd6f5c12b4760b197c7de8
-updated: 2016-10-31T23:18:59.585820982-07:00
+hash: fde583ee0a46ad1becff18ccf86318fcbcbbd0c956a12363a40efc3c54cc9bed
+updated: 2016-11-05T23:49:57.998971031-07:00
 imports:
 - name: github.com/Azure/go-ansiterm
   version: fa152c58bc15761d0200cb75fe958b89a9d4888e
   subpackages:
   - winterm
 - name: github.com/docker/docker
-  version: d8d33148d809ec97794bbd492617b1be677cf820
+  version: c5ceb0f945d390500a0045b14ffe4dcecfe46a85
   subpackages:
   - client
   - api/types/swarm
@@ -30,6 +30,7 @@ imports:
   - api/types/blkiodev
   - api/types/strslice
   - api/types/versions
+  - pkg/integration/cmd
   - pkg/term/windows
 - name: github.com/docker/go-connections
   version: f512407a188ecb16f31a33dbc9c4e4814afc1b03
@@ -38,20 +39,26 @@ imports:
 - name: github.com/docker/go-units
   version: 8a7beacffa3009a9ac66bad506b18ffdd110cf97
 - name: github.com/fsouza/go-dockerclient
-  version: 3162ed100df52ad76c94cdf1b8b2a45d4f5e203d
+  version: 5cfde1d138cd2cdc13e4aa36af631beb19dcbe9c
+- name: github.com/go-check/check
+  version: 4f90aeace3a26ad7021961c297b22c42160c7b25
 - name: github.com/hashicorp/go-cleanhttp
   version: ad28ea4487f05916463e2423a55166280e8254b5
 - name: github.com/jinzhu/now
   version: d9861969c7a7e84746d341c09020c2ef8a617f8f
 - name: github.com/Microsoft/go-winio
-  version: ce2922f643c8fd76b46cadc7f404a06282678b34
+  version: 562bb09f6612d9a4e91597184709d1cdba95af93
 - name: github.com/opencontainers/runc
-  version: bc462c96bf7b15b68ab40e86335cefcb692707c1
+  version: ac031b5bf1cc92239461125f4c1ffb760522bbf2
   subpackages:
   - libcontainer/system
   - libcontainer/user
+- name: github.com/pkg/errors
+  version: 248dadf4e9068a0b3e79f02ed0a610d935de5302
 - name: github.com/Sirupsen/logrus
   version: 55eb11d21d2a31a3cc93838241d04800f52e823d
+- name: github.com/uniplaces/carbon
+  version: 23c4b21c1871dc4727cb392b271ff1b5a6eebded
 - name: golang.org/x/net
   version: 4876518f9e71663000c348837735820161a42df7
   subpackages:
