@@ -8,6 +8,8 @@ import (
 	"strings"
 	"strconv"
 	"github.com/pkg/errors"
+	"github.com/urfave/cli"
+	"os"
 )
 
 func getAllImgs() []docker.APIImages {
@@ -67,7 +69,6 @@ func convertRegexMatchToMap(toMatch string, regex *regexp.Regexp) (map[string] s
 }
 
 func convertToNumSecs(timeScalar int, timeUnit string) int {
-	//var result int64
 	if timeUnit == "m" {
 		return timeScalar * 60
 	}
@@ -84,7 +85,6 @@ func convertToNumSecs(timeScalar int, timeUnit string) int {
 }
 
 func isOlderThan(img docker.APIImages, filterExp string) bool {
-	//createdAt := time.Unix(img.Created, 0)
 	trimmed := strings.TrimSpace(filterExp)
 	timeFilterExp := regexp.MustCompile(`(?P<num>\d+)(?P<unit>m|h|d|w|y)`)
 	timeAndUnit, err := convertRegexMatchToMap(trimmed, timeFilterExp)
@@ -103,17 +103,56 @@ func isOlderThan(img docker.APIImages, filterExp string) bool {
 	querySecs := convertToNumSecs(timeScalar, timeUnit)
 
 	return img.Created < (time.Now().Unix() - int64(querySecs))
-	//return true
+}
+
+func imgsOlderThan(imgs []docker.APIImages, filterExp string) []docker.APIImages {
+	var result []docker.APIImages
+	for _, img := range imgs {
+		if isOlderThan(img, filterExp) {
+			result = append(result, img)
+		}
+	}
+	return result
 }
 
 
 func main() {
-	//printImgs( imgsWithTag( getAllImgs(), "^<no.*" ) )
-	for _, img := range getAllImgs() {
-		fmt.Println("############ img ############")
-		printImg(img)
-		fmt.Println(isOlderThan(img, "60d"))
+
+	var ageQuery string
+	var nameQuery string
+	app := cli.NewApp()
+	app.Name = "boom"
+	app.Usage = "make an explosive entrance"
+	app.Action = func(c *cli.Context) error {
+		fmt.Println(c.Args().First())
+		imgs := getAllImgs()
+		if nameQuery != "" {
+			fmt.Println("namequery "+nameQuery)
+			imgs = imgsWithTag(imgs, nameQuery)
+		}
+		if ageQuery != "" {
+			fmt.Println("agequery "+ageQuery)
+			imgs = imgsOlderThan(imgs, ageQuery)
+		}
+
+		printImgs(imgs)
+
+		return nil
 	}
-	fmt.Println( isOlderThan(getAllImgs()[0], "60d") )
+
+	app.Flags = []cli.Flag{
+		cli.StringFlag{
+			Name:  "olderthan, o",
+			Usage: "delete images based on age",
+			Destination: &ageQuery,
+		},
+		cli.StringFlag{
+			Name: "name, n",
+			Usage: "delete images based on name",
+			Destination: &nameQuery,
+		},
+	}
+
+	app.Run(os.Args)
 
 }
