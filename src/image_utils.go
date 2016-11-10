@@ -25,6 +25,22 @@ func getAllImgs() []docker.APIImages {
 	return imgs
 }
 
+func deleteImg(img docker.APIImages)  {
+	endpoint := "unix:///var/run/docker.sock"
+	client, err := docker.NewClient(endpoint)
+
+	if err != nil {
+		panic(err)
+	}
+
+	removalOptions := docker.RemoveImageOptions{
+		Force: true,
+		NoPrune: true,
+
+	}
+	client.RemoveImageExtended(img.ID, removalOptions)
+}
+
 func printImg(img docker.APIImages) {
 	fmt.Println("ID: ", img.ID)
 	fmt.Println("RepoTags: ", img.RepoTags)
@@ -58,7 +74,6 @@ func convertRegexMatchToMap(toMatch string, regex *regexp.Regexp) (map[string] s
 		return nil, errors.New("did not find match for regex "+regex.String())
 	}
 	for i, name := range regex.SubexpNames() {
-		// result[name] = match[i]
 		if i != 0 {
 			fmt.Println("name "+name)
 			result[name] = match[i]
@@ -115,28 +130,40 @@ func imgsOlderThan(imgs []docker.APIImages, filterExp string) []docker.APIImages
 	return result
 }
 
+func deleteAndSummarize(plan bool, imgs []docker.APIImages) {
+	heading := "Deleting images"
+	if plan {
+		heading = "Running in plan mode so no images will be deleted"
+		//fmt.Println("printing imgs")
+		printImgs(imgs)
+		return;
+	}
+
+	fmt.Println(heading)
+	for _, img := range imgs {
+		fmt.Println("Deleting image with id: "+img.ID+" created at: ",time.Unix(img.Created, 0))
+		deleteImg(img)
+	}
+}
 
 func main() {
 
 	var ageQuery string
 	var nameQuery string
+	var plan bool
 	app := cli.NewApp()
 	app.Name = "boom"
 	app.Usage = "make an explosive entrance"
 	app.Action = func(c *cli.Context) error {
-		fmt.Println(c.Args().First())
+		//fmt.Println(c.Args().First())
 		imgs := getAllImgs()
 		if nameQuery != "" {
-			fmt.Println("namequery "+nameQuery)
 			imgs = imgsWithTag(imgs, nameQuery)
 		}
 		if ageQuery != "" {
-			fmt.Println("agequery "+ageQuery)
 			imgs = imgsOlderThan(imgs, ageQuery)
 		}
-
-		printImgs(imgs)
-
+		deleteAndSummarize(plan, imgs)
 		return nil
 	}
 
@@ -150,6 +177,11 @@ func main() {
 			Name: "name, n",
 			Usage: "delete images based on name",
 			Destination: &nameQuery,
+		},
+		cli.BoolFlag{
+			Name: "plan, p",
+			Usage: "run in plan mode to see what images would be deleted",
+			Destination: &plan,
 		},
 	}
 
